@@ -1,6 +1,6 @@
 # Worksoft — Acesso Remoto
 
-> Leia este README antes de baixar e instalar qualquer software. Só instale se você for usuário autorizado da **Worksoft Sistemas**.
+> Só instale se você for usuário autorizado da **Worksoft Sistemas**.
 
 ## Sobre
 Este documento explica como acessar e baixar o instalador do *Acesso Remoto* da **Worksoft** e apresenta orientações de uso e segurança.
