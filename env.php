@@ -1,25 +1,53 @@
 <?php
 
-function load_env($path)
+/**
+ * Carrega variáveis do arquivo .env para $_ENV e $_SERVER
+ * Suporta:
+ * - Comentários
+ * - Strings entre aspas
+ * - Escapes
+ * - Espaços ao redor do "="
+ */
+
+function load_env(string $path = __DIR__ . '/.env'): void
 {
-    if (!file_exists($path)) {
+    if (!is_file($path)) {
         return;
     }
 
     $lines = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 
     foreach ($lines as $line) {
-        if (strpos(trim($line), '#') === 0) {
+
+        // Remove comentários (# ou ;)
+        $line = trim(preg_replace('/^(\s*[#;].*)$/', '', $line));
+
+        if ($line === '') {
             continue;
         }
 
-        list($key, $value) = explode('=', $line, 2);
-        $key = trim($key);
-        $value = trim($value);
+        // Divide KEY=VALUE
+        $parts = explode('=', $line, 2);
+        if (count($parts) !== 2) {
+            continue;
+        }
 
+        $key   = trim($parts[0]);
+        $value = trim($parts[1]);
+
+        // Remove aspas se existir "value" ou 'value'
+        if (
+            (str_starts_with($value, '"') && str_ends_with($value, '"')) ||
+            (str_starts_with($value, "'") && str_ends_with($value, "'"))
+        ) {
+            $value = substr($value, 1, -1);
+        }
+
+        // Armazena nas superglobais
         $_ENV[$key] = $value;
-        putenv("$key=$value");
+        $_SERVER[$key] = $value;
     }
 }
 
-load_env(__DIR__ . '/.env');
+// Carrega automaticamente ao incluir o arquivo
+load_env();
